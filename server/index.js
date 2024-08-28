@@ -12,6 +12,7 @@ const cors = require("cors");
 const {cloudinaryConnect } = require("./config/cloudinary");
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
@@ -27,6 +28,18 @@ app.use(
 		credentials:true
 	})
 )
+
+const dirName = path.resolve();
+if(process.env.NODE_ENV==='production'){
+app.use(express.static(path.join(dirName,"/src/build")));
+
+app.get('*', (req,res)=>{
+	res.send(path.resolve(dirName,"src","build","index.html"))
+})
+}else{
+	console.log("some error occured while production build")
+}
+
 
 
 app.use(
